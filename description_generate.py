@@ -18,7 +18,7 @@ username = getpass.getpass('SSH UserID: ')
 passwd = getpass.getpass('Password to Jumphost: ')
 connection = ConnectHandler(
 device_type='linux',
-host='itenoc',  
+host='jumphost',  
 username=username, 
 password=passwd, 
 ) 
