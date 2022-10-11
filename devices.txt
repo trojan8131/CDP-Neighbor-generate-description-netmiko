@@ -1,0 +1,2 @@
+login;R1;password;cisco_ios
+admin;SW1;R2;cisco;cisco_nxos
