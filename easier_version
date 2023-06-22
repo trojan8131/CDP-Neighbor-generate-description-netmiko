@@ -1,0 +1,82 @@
+from netmiko import ConnectHandler
+from tabulate import tabulate
+
+devices={}
+devices["R1"]={
+    "device_type":'cisco_ios',
+    "ip":"172.16.138.11",
+    "username":'cisco',
+    "password":"cisco"
+}
+devices["R2-MPLS"]={
+    "device_type":'cisco_ios',
+    "ip":"172.16.138.12",
+    "username":'cisco',
+    "password":"cisco"
+}
+devices["R3-INTERNET"]={
+    "device_type":'cisco_ios',
+    "ip":"172.16.138.13",
+    "username":'cisco',
+    "password":"cisco"
+}
+devices["SW-CORE1"]={
+    "device_type":'cisco_ios',
+    "ip":"172.16.138.14",
+    "username":'cisco',
+    "password":"cisco"
+}
+devices["SW-ACCESS1"]={
+    "device_type":'cisco_ios',
+    "ip":"172.16.138.15",
+    "username":'cisco',
+    "password":"cisco"
+}
+devices["SW-ACCESS2"]={
+    "device_type":'cisco_ios',
+    "ip":"172.16.138.16",
+    "username":'cisco',
+    "password":"cisco"
+}
+devices["SW-CORE2"]={
+    "device_type":'cisco_ios',
+    "ip":"172.16.138.17",
+    "username":'cisco',
+    "password":"cisco"
+}
+
+array_ports=[]
+for hostname,device_info in devices.items():
+    connection = ConnectHandler(**device_info) 
+    cdp_info=connection.send_command("show cdp neighbors detail",use_textfsm=True)
+    pprint.pprint(cdp_info)
+    #show_desc=connection.send_command("show interface description",use_textfsm=True)
+    #pprint.pprint(interfaces)
+    for interface in cdp_info:
+        #pprint.pprint(interface)
+        array_ports.append([hostname,interface["local_port"],interface["destination_host"].replace(".Cisco.local",""),interface["remote_port"]])
+        #pprint.pprint(array_ports)
+        host=interface["destination_host"].replace(".Cisco.local","")
+        config=[f"interface {interface['local_port']}",f"description **** Link to {host} on port {interface['remote_port']} ****"]
+        #print(connection.send_config_set(config))
+    connection.disconnect()
+#print(tabulate(array_ports, headers=["Device","Local Port","Connected to","Remote Port"], tablefmt="grid"))
+
+
+table = tabulate(array_ports,headers=["Device", "Local Port", "Connected to", "Remote Port"], tablefmt="grid")
+print(table)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
